@@ -9,6 +9,7 @@
 	"dependencies": {
 		"coffee-script": "1.6.3",
 		"logging": "2.0.21",
-		"config": "0.4.34"
+		"config": "0.4.34",
+		"express": "3.4.8"
 	}
 }

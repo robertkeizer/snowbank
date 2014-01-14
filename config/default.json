@@ -1,5 +1,5 @@
 {
-	"Database": {
-		"url": "http://localhost:5984/snowbank"
+	"api": {
+		"port": 1338
 	}
 }
