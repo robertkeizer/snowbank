@@ -1,20 +1,17 @@
-snowbank
-========
-
-
 Simple and Flexible
 ===================
 The basic idea of this project ( currently codenamed snowbank ), is to provide a very simple framework that provides a way of relating and accessing different data types, even from disparit systems.
 
-Take for example, the idea of a ticket system. There are a plethora of systems that do any task you can imagine; but few allow for an easy addition of say, an asset tracking system. Even fewer allow for an addition of a proprietary source control system.
+The system should be customizable enough that it can be used
+ * as a ticket system
+ * as an asset tracking system
+ * for customer relationship management
+ * for inventory and order management
 
-Being able to reference a ticket in source control is nothing new, but being able to define what can be referenced in an intuitive system, and the ability to create arbitrary documents and data types, is currently not available.
+Users will be able to define what can and cannot be referenced, how it is referenced, as well as the ability to create arbitrary documents and data types.
 
-For example:
- * the ticket document would contain a regex to match ticket links;
- * it would also contain information about how to query for tickets;
- * what fields are required, and so on.
+API
+===
+The API is currently being developed as a simple GET / POST system.
 
-The web interface is going to be a fairly straight forward call/response frontend, with the ability to define new documents.
-
-The ability to interface with outside systems can be achieved in the same; creating a document that defines how to create / list / modify items.
+Documentation and available features for the API will be made available through the API; allowing end programs to dynamically change, based on what is and is not available.
