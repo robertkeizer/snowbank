@@ -1,0 +1,14 @@
+{
+	"name": "snowbank",
+	"description": "Simple Generic Framework",
+	"version": "0.0.1",
+	"repository": {
+		"type": "git",
+		"url": "http://github.com/robertkeizer/snowbank.git"
+	},
+	"dependencies": {
+		"coffee-script": "1.6.3",
+		"logging": "2.0.21",
+		"config": "0.4.34"
+	}
+}
