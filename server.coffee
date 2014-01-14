@@ -21,7 +21,7 @@ class generic_odm
 			_id	= @_id
 		
 		# use _id to remove the document..
-		cb null
+		cb { "error": "would have deleted document of type '#{@type}' with id of '#{@_id}'" }
 
 	update: ( _id, doc, cb ) ->
 
@@ -84,17 +84,20 @@ app.get "/create/:type", ( req, res ) ->
 	# TODO
 	_o = { "name": "robert", "age": 23 }
 
-	req._doc.create _o, res.json 
+	req._doc.create _o, ( err ) ->
+		res.json err
 	res.end( )
 
 app.get "/delete/:type/:id", ( req, res ) ->
-	req._doc.delete res.json 
+	req._doc.delete ( err ) ->
+		res.json err
 	res.end( )
 
 app.get "/update/:type/:id", ( req, res ) ->
 	# parse the updated object from req..
 	_o = { }
-	req._type.update _o, res.json 
+	req._type.update _o, ( err ) ->
+		res.json err
 	res.end( )
 
 app.listen config.api.port, ( ) ->
