@@ -2,6 +2,7 @@ log	= require( "logging" ).from __filename
 config	= require "config"
 express	= require "express"
 cradle	= require "cradle"
+async	= require "async"
 
 # Generic ODM class.
 class generic_odm
@@ -18,7 +19,7 @@ class generic_odm
 		# In the future this will have some logic that will
 		# return a list of the required attributes this type must
 		# have.. or at least should have..
-		cb [ ]
+		cb null, [ "some_attribute" ]
 
 	list: ( filters, cb ) ->
 		cb null, "what?"
@@ -103,7 +104,7 @@ app.get "/create/:type", ( req, res ) ->
 			res.end( )
 		
 		async.each required_fields, ( required_field, cb ) ->
-			cb ( not required_field of req.body ) ? ( required_field ) : null
+			cb ( not required_field of req.body ) ? required_field : null
 		, ( err ) ->
 			if err
 				res.json err

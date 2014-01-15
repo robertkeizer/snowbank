@@ -11,6 +11,7 @@
 		"logging": "2.0.21",
 		"config": "0.4.34",
 		"express": "3.4.8",
-		"cradle": "0.6.6"
+		"cradle": "0.6.6",
+		"async": "0.2.9"
 	}
 }
