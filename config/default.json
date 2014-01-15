@@ -1,5 +1,9 @@
 {
 	"api": {
 		"port": 1338
+	},
+	"database": {
+		"url": "http://localhost",
+		"port": 5984
 	}
 }

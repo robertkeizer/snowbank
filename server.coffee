@@ -1,16 +1,22 @@
 log	= require( "logging" ).from __filename
 config	= require "config"
 express	= require "express"
+cradle	= require "cradle"
 
 # Generic ODM class.
+
+# quick note that in the future, based on the
+# type, the actual instance could have custom
+# stuff in it.
 class generic_odm
 	constructor: (@type, @database) ->
-		
+		@_db = new (cradle.Connection)( @database.url, @database.port ).database @database.db
+
 	list: ( filters, cb ) ->
 		cb null, "what?"
 
 	create: ( doc, cb ) ->
-		cb null
+		@_db.save doc, cb
 
 	delete: ( _id, cb ) ->
 
@@ -84,9 +90,12 @@ app.get "/create/:type", ( req, res ) ->
 	# TODO
 	_o = { "name": "robert", "age": 23 }
 
-	req._doc.create _o, ( err ) ->
-		res.json err
-	res.end( )
+	req._doc.create _o, ( err, _res ) ->
+		if err
+			res.json err
+		else
+			res.json _res
+		res.end( )
 
 app.get "/delete/:type/:id", ( req, res ) ->
 	req._doc.delete ( err ) ->
