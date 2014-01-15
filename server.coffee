@@ -14,6 +14,12 @@ class generic_odm
 		# for this type.
 		cb null
 
+	_get_required_attributes: ( cb ) ->
+		# In the future this will have some logic that will
+		# return a list of the required attributes this type must
+		# have.. or at least should have..
+		cb [ ]
+
 	list: ( filters, cb ) ->
 		cb null, "what?"
 
@@ -56,6 +62,7 @@ app = express( )
 
 app.use express.logger( )
 app.use express.compress( )
+app.use express.bodyParser( )
 app.use express.cookieParser( )
 app.use express.cookieSession( { "secret": "no" } )
 
@@ -88,13 +95,28 @@ app.get "/list/:type", ( req, res ) ->
 	res.end( )
 
 app.get "/create/:type", ( req, res ) ->
-	# parse the body for the object properties..
-	# TODO
-	_o = { "name": "robert", "age": 23 }
+	
+	# Force the required fields based on the type..
+	req._doc._get_required_attributes ( err, required_fields ) ->
+		if err
+			res.json err
+			res.end( )
+		
+		async.each required_fields, ( required_field, cb ) ->
+			cb ( not required_field of req.body ) ? ( required_field ) : null
+		, ( err ) ->
+			if err
+				res.json err
+				res.end( )
 
-	req._doc.create _o, ( err, _res ) ->
-		res.json ( err ) ? err : _res
-		res.end( )
+			# At this point we know that all the required fields have been met..
+			# parse the body for the object properties..
+			# TODO
+			_o = { "name": "robert", "age": 23 }
+
+			req._doc.create _o, ( err, _res ) ->
+				res.json ( err ) ? err : _res
+				res.end( )
 
 app.get "/delete/:type/:id", ( req, res ) ->
 	req._doc.delete ( err ) ->
