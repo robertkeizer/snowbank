@@ -4,13 +4,15 @@ express	= require "express"
 cradle	= require "cradle"
 
 # Generic ODM class.
-
-# quick note that in the future, based on the
-# type, the actual instance could have custom
-# stuff in it.
 class generic_odm
 	constructor: (@type, @database) ->
 		@_db = new (cradle.Connection)( @database.url, @database.port ).database @database.db
+
+	_force_ready: ( cb ) ->
+		# This function only callbacks if everything is ready; such as
+		# the database exists, and we've already loaded views are available
+		# for this type.
+		cb null
 
 	list: ( filters, cb ) ->
 		cb null, "what?"
@@ -91,10 +93,7 @@ app.get "/create/:type", ( req, res ) ->
 	_o = { "name": "robert", "age": 23 }
 
 	req._doc.create _o, ( err, _res ) ->
-		if err
-			res.json err
-		else
-			res.json _res
+		res.json ( err ) ? err : _res
 		res.end( )
 
 app.get "/delete/:type/:id", ( req, res ) ->
