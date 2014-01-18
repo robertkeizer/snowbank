@@ -101,6 +101,7 @@ app.use express.compress( )
 app.use express.bodyParser( )
 app.use express.cookieParser( )
 app.use express.cookieSession( { "secret": "no" } )
+app.use express.static __dirname + "/www"
 
 # Handle the paramter 'type'.
 app.param "type", ( req, res, cb, type ) ->
@@ -122,7 +123,7 @@ app.param "id", ( req, res, cb, id ) ->
 	cb( )
 
 app.get "/", ( req, res ) ->
-	res.send "hi"
+	res.redirect "/index.html"
 
 app.get "/list/:type", ( req, res ) ->
 	req._doc.list null, ( err, _res ) ->
