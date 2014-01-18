@@ -10,9 +10,9 @@ class generic_odm
 		@_db = new (cradle.Connection)( @database.url, @database.port ).database @database.db
 
 	_force_ready: ( cb ) ->
-		# This function only callbacks if everything is ready; such as
-		# the database exists, and we've already loaded views are available
-		# for this type.
+		# Block wait until this instance is
+		# ready to respond to requests.. ie has polled the
+		# type definition from the db..
 		cb null
 
 	_get_required_attributes: ( cb ) ->
@@ -25,7 +25,23 @@ class generic_odm
 		cb null, "what?"
 
 	create: ( doc, cb ) ->
-		@_db.save doc, cb
+		# Verify the required attributes.
+		# Note that this in turn calls _force_ready..
+		@_get_required_attributes ( err, required_fields ) ->
+			if err
+				return cb err
+
+			# Go through each of the required fields and confirm that it exists
+			# in the document that we're trying to create. If it doesn't, 
+			# cb with an error.
+			async.each required_fields, ( required_field, cb ) ->
+				cb ( not required_field of doc ) ? required_field : null
+			, ( err ) ->
+				if err
+					return cb err
+
+				# Execute the cradle .save function; pass along the callback.
+				@_db.save doc, cb
 
 	delete: ( _id, cb ) ->
 
@@ -96,28 +112,9 @@ app.get "/list/:type", ( req, res ) ->
 	res.end( )
 
 app.get "/create/:type", ( req, res ) ->
-	
-	# Force the required fields based on the type..
-	req._doc._get_required_attributes ( err, required_fields ) ->
-		if err
-			res.json err
-			res.end( )
-		
-		async.each required_fields, ( required_field, cb ) ->
-			cb ( not required_field of req.body ) ? required_field : null
-		, ( err ) ->
-			if err
-				res.json err
-				res.end( )
-
-			# At this point we know that all the required fields have been met..
-			# parse the body for the object properties..
-			# TODO
-			_o = { "name": "robert", "age": 23 }
-
-			req._doc.create _o, ( err, _res ) ->
-				res.json ( err ) ? err : _res
-				res.end( )
+	req._doc.create req.body, ( err, _res ) ->
+		res.json ( err ) ? err : _res
+		res.end( )
 
 app.get "/delete/:type/:id", ( req, res ) ->
 	req._doc.delete ( err ) ->
