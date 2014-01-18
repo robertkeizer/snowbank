@@ -7,7 +7,21 @@ async	= require "async"
 # Generic ODM class.
 class generic_odm
 	constructor: (@type, @database) ->
-		@_db = new (cradle.Connection)( @database.url, @database.port ).database @database.db
+
+		# Define the database connection instance.
+		@_db	= new (cradle.Connection)( @database.url, @database.port ).database @database.db
+
+		# Specify an instance variable, @_ready; Call @_get_ready, which will
+		# change @_ready when complete.
+		@_ready	= false
+		@_get_ready ( ) ->
+			
+
+	_get_ready: ( cb ) ->
+		# Get the type definition from the database.
+		# Also set the instance variable to be ready, so that other parts
+		# can continue.
+		cb null
 
 	_force_ready: ( cb ) ->
 		# Block wait until this instance is
@@ -16,10 +30,15 @@ class generic_odm
 		cb null
 
 	_get_required_attributes: ( cb ) ->
-		# In the future this will have some logic that will
-		# return a list of the required attributes this type must
-		# have.. or at least should have..
-		cb null, [ "some_attribute" ]
+		
+		@_force_ready ( err ) ->
+			if err
+				return cb err
+
+			# Query the database for the type definition.
+			#TODO
+			# @_db.
+			cb null, [ "some_attribute" ]
 
 	list: ( filters, cb ) ->
 		cb null, "what?"
